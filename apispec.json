@@ -1,0 +1,246 @@
+{
+  "openapi": "3.0.3",
+  "info": {
+    "title": "Barang RESTful API",
+    "description": "API Spec for Barang RESTful API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3000/api"
+    }
+  ],
+  "paths": {
+    "/barangs": {
+      "get": {
+        "security": [{
+          "BarangAuth" : []
+        }],
+        "tags": [
+          "Barang API"
+        ],
+        "description": "List all Barangs",
+        "summary": "List all Barangs",
+        "responses": {
+          "200": {
+            "description": "Success get all barangs",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code": {
+                      "type": "number"
+                    },
+                    "status": {
+                      "type": "string"
+                    },
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/Barang"
+                      }
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "post": {
+        "security": [{
+          "BarangAuth" : []
+        }],
+        "tags": ["Barang API"],
+        "description": "Create new Barang",
+        "summary": "Create new Barang",
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrUpdateBarang"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success Create Barang",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code" : {
+                      "type": "number"
+                    },
+                    "status" : {
+                      "type": "string"
+                    },
+                    "data" : {
+                      "$ref": "#/components/schemas/Barang"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/barangs/{barangId}" : {
+      "get" : {
+        "security": [{
+          "BarangAuth" : []
+        }],
+        "tags": ["Barang API"],
+        "summary": "Get barang by Id",
+        "description": "Get barang by id",
+        "parameters": [
+          {
+            "name": "barangId",
+            "in": "path",
+            "description": "Barang Id"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description": "Success get barang",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code" : {
+                      "type": "number"
+                    },
+                    "status" : {
+                      "type": "string"
+                    },
+                    "data" : {
+                      "$ref": "#/components/schemas/Barang"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "put" : {
+        "security": [{
+          "BarangAuth" : []
+        }],
+        "tags": ["Barang API"],
+        "summary": "Update barang by Id",
+        "description": "Update barang by Id",
+        "parameters": [
+          {
+            "name": "barangId",
+            "in": "path",
+            "description": "Barang Id"
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CreateOrUpdateBarang"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200" : {
+            "description": "Success get barang",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code" : {
+                      "type": "number"
+                    },
+                    "status" : {
+                      "type": "string"
+                    },
+                    "data" : {
+                      "$ref": "#/components/schemas/Barang"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "security": [{
+          "BarangAuth" : []
+        }],
+        "tags": ["Barang API"],
+        "summary": "Delete barang by Id",
+        "description": "Delete barang by id",
+        "parameters": [
+          {
+            "name": "barangId",
+            "in": "path",
+            "description": "Barang Id"
+          }
+        ],
+        "responses": {
+          "200" : {
+            "description": "Success delete barang",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "code" : {
+                      "type": "number"
+                    },
+                    "status" : {
+                      "type": "string"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "securitySchemes": {
+      "BarangAuth" : {
+        "type": "apiKey",
+        "in" : "header",
+        "name": "X-API-Key",
+        "description": "Authentication for Barang API"
+      }
+    },
+    "schemas": {
+      "CreateOrUpdateBarang" : {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string"
+          }
+        }
+      },
+      "Barang" : {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number"
+          },
+          "name": {
+            "type": "string"
+          }
+        }
+      }
+    }
+  }
+}

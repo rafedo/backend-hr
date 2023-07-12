@@ -1,0 +1,40 @@
+### Get all barang
+GET http://localhost:3000/api/barang
+X-API-Key: dHsi2
+Accept: application/json
+
+### Create new category
+POST http://localhost:3000/api/barang
+X-API-Key: dHsi2
+Accept: application/json
+Content-Type: application/json
+
+{
+
+  "name" : "jam",
+  "category" : "elektronik",
+  "price" : 5000
+}
+
+### Get category by Id
+GET http://localhost:3000/api/barang/1
+X-API-Key: dHsi2
+Accept: application/json
+
+### Update category by id
+PATCH http://localhost:3000/api/barang/
+X-API-Key: dHsi2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "id"  : 3,
+  "name" : "jam",
+  "category" : "elektronik",
+  "price" : 5000
+}
+
+### Delete category by id
+DELETE http://localhost:3000/api/barang/2
+X-API-Key: dHsi2
+Accept: application/json
