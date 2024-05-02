@@ -2,11 +2,14 @@ package Config
 
 import (
 	"fmt"
+	"log"
+	"muhammadiyah/Model/Migration"
+	"os"
+
 	_ "github.com/lib/pq"
 	"gorm.io/driver/postgres"
 	"gorm.io/gen"
 	"gorm.io/gorm"
-	"os"
 )
 
 //func NewDB() *sql.DB {
@@ -39,7 +42,10 @@ func InitDB() {
 	})
 
 	DB = con
-
+	err := DB.AutoMigrate(&Migration.Alamat{}, &Migration.Wilayah{}, &Migration.Daerah{}, &Migration.Cabang{}, &Migration.Ranting{}, &Migration.Penempatan{}, &Migration.Departemen{}, &Migration.Jabatan{}, &Migration.Anggota{}, &Migration.Pengurus{}, &Migration.User{})
+	if err != nil {
+		log.Fatal(err)
+	}
 	g := gen.NewGenerator(gen.Config{
 		OutPath:      "Model/Database",
 		OutFile:      "dto",
@@ -47,17 +53,16 @@ func InitDB() {
 		WithUnitTest: true,
 		ModelPkgPath: "Database",
 	})
-
 	g.UseDB(DB)
 
 	// generate Database if the Database is used only
-	// don't generate unused Database
+	// don't generate unused Databaser
 
-	// Generates All Table in Database
+	// // Generates All Table in Database
 	g.GenerateAllTable()
 
-	// Generate Specify Table in Database
-	//g.GenerateModel("master_type_schedules")
+	// // Generate Specify Table in Database
+	// //g.GenerateModel("master_type_schedules")
 
 	g.Execute()
 }

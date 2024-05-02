@@ -1,8 +1,9 @@
 package main
 
 import (
-	"crud-barang/Config"
-	"crud-barang/Route"
+	"muhammadiyah/Config"
+	"muhammadiyah/Route"
+
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/joho/godotenv"
@@ -24,10 +25,9 @@ func main() {
 	Config.InitDB()
 
 	// Menggunakan router sebagai handler pada root route "/api"
-	Route.NewRouter(app)
-
+	Route.Router(app)
 	// Menjalankan server pada port 3000
-	err := app.Listen(":3000")
+	err := app.Listen(":3025")
 	if err != nil {
 		panic(err)
 	}

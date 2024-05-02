@@ -8,11 +8,10 @@ const TableNamePenempatan = "penempatan"
 
 // Penempatan mapped from table <penempatan>
 type Penempatan struct {
-	ID        int64 `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	WilayahID int64 `gorm:"column:wilayah_id" json:"wilayah_id"`
-	DaerahID  int64 `gorm:"column:daerah_id" json:"daerah_id"`
-	CabangID  int64 `gorm:"column:cabang_id" json:"cabang_id"`
-	RantingID int64 `gorm:"column:ranting_id" json:"ranting_id"`
+	ID         int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	LokasiID   int64  `gorm:"column:lokasi_id" json:"lokasi_id"`
+	LokasiType string `gorm:"column:lokasi_type" json:"lokasi_type"`
+	Jenis      string `gorm:"column:jenis" json:"jenis"`
 }
 
 // TableName Penempatan's table name

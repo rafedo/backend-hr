@@ -1,4 +1,4 @@
-package Domain
+package Migration
 
 type Arsip struct {
 	Id       uint   `gorm:"primaryKey"`

@@ -11,6 +11,7 @@ type User struct {
 	ID         int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	Username   string `gorm:"column:username" json:"username"`
 	Password   string `gorm:"column:password" json:"password"`
+	Email      string `gorm:"column:email" json:"email"`
 	PengurusID int64  `gorm:"column:pengurus_id" json:"pengurus_id"`
 }
 

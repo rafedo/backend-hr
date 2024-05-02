@@ -8,10 +8,17 @@ const TableNameAnggotum = "anggota"
 
 // Anggotum mapped from table <anggota>
 type Anggotum struct {
-	ID     int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	Kta    string `gorm:"column:kta" json:"kta"`
-	Nama   string `gorm:"column:nama" json:"nama"`
-	Status string `gorm:"column:status" json:"status"`
+	ID               int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	NomorKta         int64  `gorm:"column:nomor_kta" json:"nomor_kta"`
+	Ranting          int64  `gorm:"column:ranting" json:"ranting"`
+	NamaLengkap      string `gorm:"column:nama_lengkap" json:"nama_lengkap"`
+	GelarKesarjanaan string `gorm:"column:gelar_kesarjanaan" json:"gelar_kesarjanaan"`
+	GelarLainDepan   string `gorm:"column:gelar_lain_depan" json:"gelar_lain_depan"`
+	TempatLahir      string `gorm:"column:tempat_lahir" json:"tempat_lahir"`
+	TanggalLahir     string `gorm:"column:tanggal_lahir" json:"tanggal_lahir"`
+	JenisKelamin     string `gorm:"column:jenis_kelamin" json:"jenis_kelamin"`
+	Alamat           int64  `gorm:"column:alamat" json:"alamat"`
+	Status           string `gorm:"column:status" json:"status"`
 }
 
 // TableName Anggotum's table name

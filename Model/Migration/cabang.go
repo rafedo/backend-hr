@@ -1,10 +1,10 @@
-package Domain
+package Migration
 
 type Cabang struct {
-	Id           uint   `gorm:"primaryKey"`
-	NamaCabang   string `gorm:"column:nama_cabang"`
-	AlamatKantor string `gorm:"column:alamat_kantor"`
-	DaerahID     uint   `gorm:"column:daerah_id;foreignKey:DaerahID"`
+	Id         uint   `gorm:"primaryKey"`
+	NamaCabang string `gorm:"column:nama_cabang"`
+	AlamatID   Alamat `gorm:"column:alamat_kantor;foreignKey:AlamatID"`
+	DaerahID   Daerah `gorm:"column:daerah_id;foreignKey:DaerahID"`
 }
 
 // TableName returns the table name for Cabang

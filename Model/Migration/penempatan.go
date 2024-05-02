@@ -1,14 +1,14 @@
-package Domain
+package Migration
 
 type Penempatan struct {
-	Id        uint `gorm:"primaryKey"`
-	WilayahID uint `gorm:"column:wilayah_id;polymorphic:Owner;"`
-	DaerahID  uint `gorm:"column:daerah_id;polymorphic:Owner;"`
-	CabangID  uint `gorm:"column:cabang_id;polymorphic:Owner;"`
-	RantingID uint `gorm:"column:ranting_id;polymorphic:Owner;"`
+	ID         int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	LokasiID   int64  `gorm:"column:lokasi_id" json:"lokasi_id"`
+	LokasiType string `gorm:"column:lokasi_type" json:"lokasi_type"`
+	Jenis      string `gorm:"column:jenis" json:"jenis"`
+	// Kolom-kolom lain yang diperlukan
 }
 
-// TableName returns the table name for Penempatan
+// TableName Penempatan's table name
 func (*Penempatan) TableName() string {
-	return "penempatan" // Ganti dengan nama tabel yang diinginkan
+	return "penempatan"
 }

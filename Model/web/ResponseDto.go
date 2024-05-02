@@ -1,4 +1,4 @@
-package web
+package Web
 
 type ResponseDto struct {
 	Message string      `json:"message"`

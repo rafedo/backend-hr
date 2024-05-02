@@ -1,10 +1,10 @@
-package Domain
+package Migration
 
 type Daerah struct {
-	Id           uint   `gorm:"primaryKey"`
-	NamaDaerah   string `gorm:"column:nama_daerah"`
-	AlamatKantor string `gorm:"column:alamat_kantor"`
-	WilayahID    uint   `gorm:"column:wilayah_id;foreignKey:WilayahID"`
+	Id         uint    `gorm:"primaryKey"`
+	NamaDaerah string  `gorm:"column:nama_daerah"`
+	AlamatID   Alamat  `gorm:"column:alamat_kantor;foreignKey:AlamatID"`
+	WilayahID  Wilayah `gorm:"column:wilayah_id;foreignKey:WilayahID"`
 }
 
 // TableName returns the table name for Daerah

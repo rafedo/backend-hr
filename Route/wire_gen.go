@@ -21,3 +21,26 @@ func PWMDI(db *gorm.DB) *Controller.PWMControllerImpl {
 	pwmControllerImpl := Controller.PWMControllerControllerProvider(pwmServiceImpl)
 	return pwmControllerImpl
 }
+
+func DepartmentDI(db *gorm.DB) *Controller.DepartmentControllerImpl {
+	departmentRepositoryImpl := Repository.DepartmentRepositoryControllerProvider(db)
+	departmentServiceImpl := Services.DepartmentServiceControllerProvider(departmentRepositoryImpl)
+	departmentControllerImpl := Controller.DepartmentControllerControllerProvider(departmentServiceImpl)
+	return departmentControllerImpl
+}
+
+func PengurusDI(db *gorm.DB) *Controller.PengurusControllerImpl {
+	pengurusRepositoryImpl := Repository.PengurusRepositoryControllerProvider(db)
+	pengurusServiceImpl := Services.PengurusServiceControllerProvider(pengurusRepositoryImpl)
+	pengurusControllerImpl := Controller.PengurusControllerControllerProvider(pengurusServiceImpl)
+	return pengurusControllerImpl
+}
+
+func AuthDI(db *gorm.DB) *Controller.AuthControllerImpl {
+	authRepositoryImpl := Repository.AuthRepositoryControllerProvider(db)
+	pengurusRepositoryImpl := Repository.PengurusRepositoryControllerProvider(db)
+	pwmRepositoryImpl := Repository.PWMRepositoryControllerProvider(db)
+	authServiceImpl := Services.AuthServiceControllerProvider(authRepositoryImpl, pengurusRepositoryImpl, pwmRepositoryImpl)
+	authControllerImpl := Controller.AuthControllerControllerProvider(authServiceImpl)
+	return authControllerImpl
+}

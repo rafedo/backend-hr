@@ -11,6 +11,7 @@ type Departeman struct {
 	ID           int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	Nama         string `gorm:"column:nama" json:"nama"`
 	PenempatanID int64  `gorm:"column:penempatan_id" json:"penempatan_id"`
+	Bagian       string `gorm:"column:bagian" json:"bagian"`
 }
 
 // TableName Departeman's table name

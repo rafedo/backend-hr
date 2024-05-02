@@ -10,8 +10,7 @@ const TableNameRanting = "ranting"
 type Ranting struct {
 	ID           int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	NamaRanting  string `gorm:"column:nama_ranting" json:"nama_ranting"`
-	AlamatKantor string `gorm:"column:alamat_kantor" json:"alamat_kantor"`
-	RantingID    int64  `gorm:"column:ranting_id" json:"ranting_id"`
+	AlamatKantor int64  `gorm:"column:alamat_kantor" json:"alamat_kantor"`
 	CabangID     int64  `gorm:"column:cabang_id" json:"cabang_id"`
 }
 

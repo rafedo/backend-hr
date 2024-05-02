@@ -10,7 +10,7 @@ const TableNameCabang = "cabang"
 type Cabang struct {
 	ID           int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	NamaCabang   string `gorm:"column:nama_cabang" json:"nama_cabang"`
-	AlamatKantor string `gorm:"column:alamat_kantor" json:"alamat_kantor"`
+	AlamatKantor int64  `gorm:"column:alamat_kantor" json:"alamat_kantor"`
 	DaerahID     int64  `gorm:"column:daerah_id" json:"daerah_id"`
 }
 

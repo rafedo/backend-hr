@@ -1,10 +1,10 @@
-package Domain
+package Migration
 
 type Ranting struct {
-	Id           uint   `gorm:"primaryKey"`
-	NamaRanting  string `gorm:"column:nama_ranting"`
-	AlamatKantor string `gorm:"column:alamat_kantor"`
-	RantingID    uint   `gorm:"column:ranting_id;foreignKey:RantingID"`
+	Id          uint   `gorm:"primaryKey"`
+	NamaRanting string `gorm:"column:nama_ranting"`
+	AlamatID    Alamat `gorm:"column:alamat_kantor;foreignKey:AlamatID"`
+	CabangID    Cabang `gorm:"column:cabang_id;foreignKey:CabangID"`
 }
 
 // TableName returns the table name for Ranting

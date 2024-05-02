@@ -10,7 +10,7 @@ const TableNameWilayah = "wilayah"
 type Wilayah struct {
 	ID           int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
 	NamaWilayah  string `gorm:"column:nama_wilayah" json:"nama_wilayah"`
-	AlamatKantor string `gorm:"column:alamat_kantor" json:"alamat_kantor"`
+	AlamatKantor int64  `gorm:"column:alamat_kantor" json:"alamat_kantor"`
 }
 
 // TableName Wilayah's table name

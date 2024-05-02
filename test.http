@@ -1,40 +1,113 @@
-### Get all barang
-GET http://localhost:3000/api/barang
+### Get all wilayah
+GET http://localhost:3000/wilayah
 X-API-Key: dHsi2
 Accept: application/json
 
-### Create new category
-POST http://localhost:3000/api/barang
+### Create new wilayah
+POST http://localhost:3000/wilayah
 X-API-Key: dHsi2
 Accept: application/json
 Content-Type: application/json
 
 {
-
-  "name" : "jam",
-  "category" : "elektronik",
-  "price" : 5000
+  "nama_wilayah" : "Jakarta",
+  "alamat" : "Jl. Sudirman No. 10",
+  "kelurahan" : "Karet Kuningan",
+  "kecamatan" : "Setiabudi",
+  "kab_kota" : "Jakarta Selatan",
+  "propinsi" : "DKI Jakarta",
+  "kode_pos" : "12930"
 }
 
-### Get category by Id
-GET http://localhost:3000/api/barang/1
+### Get wilayah by ID
+GET http://localhost:3000/wilayah/1
 X-API-Key: dHsi2
 Accept: application/json
 
-### Update category by id
-PATCH http://localhost:3000/api/barang/
+### Update wilayah by ID
+PATCH http://localhost:3000/wilayah
 X-API-Key: dHsi2
 Accept: application/json
 Content-Type: application/json
 
 {
   "id"  : 3,
-  "name" : "jam",
-  "category" : "elektronik",
-  "price" : 5000
+  "nama_wilayah" : "Jakarta",
+  "alamat" : "Jl. Sudirman No. 10",
+  "kelurahan" : "Karet Kuningan",
+  "kecamatan" : "Setiabudi",
+  "kab_kota" : "Jakarta Selatan",
+  "propinsi" : "DKI Jakarta",
+  "kode_pos" : "12930"
 }
 
-### Delete category by id
-DELETE http://localhost:3000/api/barang/2
+### Delete wilayah by ID
+DELETE http://localhost:3000/wilayah/2
+X-API-Key: dHsi2
+Accept: application/json
+
+### Create new daerah
+POST http://localhost:3000/daerah
+X-API-Key: dHsi2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "nama_daerah" : "Daerah Baru",
+  "alamat" : "Jl. Baru No. 1",
+  "kelurahan" : "Baru",
+  "kecamatan" : "Baru Utara",
+  "kab_kota" : "Baru Selatan",
+  "propinsi" : "Baru",
+  "kode_pos" : "12345",
+  "wilayah_id" : 1
+}
+
+### Create new cabang
+POST http://localhost:3000/cabang
+X-API-Key: dHsi2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "nama_cabang" : "Cabang Baru",
+  "alamat" : "Jl. Cabang No. 1",
+  "kelurahan" : "Cabang",
+  "kecamatan" : "Cabang Utara",
+  "kab_kota" : "Cabang Selatan",
+  "propinsi" : "Cabang",
+  "kode_pos" : "54321",
+  "daerah_id" : 1
+}
+
+### Create new ranting
+POST http://localhost:3000/ranting
+X-API-Key: dHsi2
+Accept: application/json
+Content-Type: application/json
+
+{
+  "nama_ranting" : "Ranting Baru",
+  "alamat" : "Jl. Ranting No. 1",
+  "kelurahan" : "Ranting",
+  "kecamatan" : "Ranting Utara",
+  "kab_kota" : "Ranting Selatan",
+  "propinsi" : "Ranting",
+  "kode_pos" : "67890",
+  "cabang_id" : 1
+}
+
+### Get daerah by ID
+GET http://localhost:3000/daerah/1
+X-API-Key: dHsi2
+Accept: application/json
+
+### Get cabang by ID
+GET http://localhost:3000/cabang/1
+X-API-Key: dHsi2
+Accept: application/json
+
+### Get ranting by ID
+GET http://localhost:3000/ranting/1
 X-API-Key: dHsi2
 Accept: application/json

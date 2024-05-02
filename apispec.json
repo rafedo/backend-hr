@@ -1,46 +1,29 @@
 {
   "openapi": "3.0.3",
   "info": {
-    "title": "Barang RESTful API",
-    "description": "API Spec for Barang RESTful API",
+    "title": "Pengurus API",
+    "description": "API untuk mengelola data pengurus di Muhammadiyah",
     "version": "1.0.0"
   },
   "servers": [
     {
-      "url": "http://localhost:3000/api"
+      "url": "http://localhost:3025/api/muhammadiyah/"
     }
   ],
   "paths": {
-    "/barangs": {
+    "/wilayah": {
       "get": {
-        "security": [{
-          "BarangAuth" : []
-        }],
-        "tags": [
-          "Barang API"
-        ],
-        "description": "List all Barangs",
-        "summary": "List all Barangs",
+        "tags": ["Wilayah"],
+        "summary": "Mendapatkan daftar semua wilayah",
         "responses": {
           "200": {
-            "description": "Success get all barangs",
+            "description": "Daftar wilayah berhasil diperoleh",
             "content": {
               "application/json": {
                 "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code": {
-                      "type": "number"
-                    },
-                    "status": {
-                      "type": "string"
-                    },
-                    "data": {
-                      "type": "array",
-                      "items": {
-                        "$ref": "#/components/schemas/Barang"
-                      }
-                    }
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Wilayah"
                   }
                 }
               }
@@ -49,197 +32,144 @@
         }
       },
       "post": {
-        "security": [{
-          "BarangAuth" : []
-        }],
-        "tags": ["Barang API"],
-        "description": "Create new Barang",
-        "summary": "Create new Barang",
+        "tags": ["Wilayah"],
+        "summary": "Membuat wilayah baru",
         "requestBody": {
+          "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateOrUpdateBarang"
+                "$ref": "#/components/schemas/CreateWilayahRequest"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Wilayah baru berhasil dibuat"
+          }
+        }
+      }
+    },
+    "/wilayah/{id}": {
+      "get": {
+        "tags": ["Wilayah"],
+        "summary": "Mendapatkan wilayah berdasarkan ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Wilayah berhasil ditemukan",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Wilayah"
+                }
+              }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Wilayah"],
+        "summary": "Memperbarui data wilayah berdasarkan ID",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/UpdateWilayahRequest"
               }
             }
           }
         },
         "responses": {
           "200": {
-            "description": "Success Create Barang",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code" : {
-                      "type": "number"
-                    },
-                    "status" : {
-                      "type": "string"
-                    },
-                    "data" : {
-                      "$ref": "#/components/schemas/Barang"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/barangs/{barangId}" : {
-      "get" : {
-        "security": [{
-          "BarangAuth" : []
-        }],
-        "tags": ["Barang API"],
-        "summary": "Get barang by Id",
-        "description": "Get barang by id",
-        "parameters": [
-          {
-            "name": "barangId",
-            "in": "path",
-            "description": "Barang Id"
-          }
-        ],
-        "responses": {
-          "200" : {
-            "description": "Success get barang",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code" : {
-                      "type": "number"
-                    },
-                    "status" : {
-                      "type": "string"
-                    },
-                    "data" : {
-                      "$ref": "#/components/schemas/Barang"
-                    }
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "put" : {
-        "security": [{
-          "BarangAuth" : []
-        }],
-        "tags": ["Barang API"],
-        "summary": "Update barang by Id",
-        "description": "Update barang by Id",
-        "parameters": [
-          {
-            "name": "barangId",
-            "in": "path",
-            "description": "Barang Id"
-          }
-        ],
-        "requestBody": {
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/CreateOrUpdateBarang"
-              }
-            }
-          }
-        },
-        "responses": {
-          "200" : {
-            "description": "Success get barang",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code" : {
-                      "type": "number"
-                    },
-                    "status" : {
-                      "type": "string"
-                    },
-                    "data" : {
-                      "$ref": "#/components/schemas/Barang"
-                    }
-                  }
-                }
-              }
-            }
+            "description": "Wilayah berhasil diperbarui"
           }
         }
       },
       "delete": {
-        "security": [{
-          "BarangAuth" : []
-        }],
-        "tags": ["Barang API"],
-        "summary": "Delete barang by Id",
-        "description": "Delete barang by id",
+        "tags": ["Wilayah"],
+        "summary": "Menghapus wilayah berdasarkan ID",
         "parameters": [
           {
-            "name": "barangId",
+            "name": "id",
             "in": "path",
-            "description": "Barang Id"
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
           }
         ],
         "responses": {
-          "200" : {
-            "description": "Success delete barang",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "type": "object",
-                  "properties": {
-                    "code" : {
-                      "type": "number"
-                    },
-                    "status" : {
-                      "type": "string"
-                    }
-                  }
-                }
-              }
-            }
+          "204": {
+            "description": "Wilayah berhasil dihapus"
           }
         }
       }
     }
   },
   "components": {
-    "securitySchemes": {
-      "BarangAuth" : {
-        "type": "apiKey",
-        "in" : "header",
-        "name": "X-API-Key",
-        "description": "Authentication for Barang API"
-      }
-    },
     "schemas": {
-      "CreateOrUpdateBarang" : {
+      "Wilayah": {
         "type": "object",
         "properties": {
-          "name": {
+          "id": {
+            "type": "string"
+          },
+          "nama": {
+            "type": "string"
+          },
+          "keterangan": {
             "type": "string"
           }
         }
       },
-      "Barang" : {
+      "CreateWilayahRequest": {
+        "type": "object",
+        "properties": {
+          "nama": {
+            "type": "string"
+          },
+          "keterangan": {
+            "type": "string"
+          }
+        },
+        "required": ["nama", "keterangan"]
+      },
+      "UpdateWilayahRequest": {
         "type": "object",
         "properties": {
           "id": {
-            "type": "number"
+            "type": "string"
           },
-          "name": {
+          "nama": {
+            "type": "string"
+          },
+          "keterangan": {
             "type": "string"
           }
-        }
+        },
+        "required": ["id", "nama", "keterangan"]
       }
     }
   }
