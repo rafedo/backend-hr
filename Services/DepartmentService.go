@@ -13,6 +13,7 @@ type (
 		CreateDepartment(request []Domain.CreateDepartmentRequest) (id int64, serviceErr *Web.ServiceErrorDto)
 		UpdateDepartment(request Domain.UpdateDepartmentRequest) (id int64, serviceErr *Web.ServiceErrorDto)
 		DeleteDepartment(id int64) (serviceErr *Web.ServiceErrorDto)
+		FindDepartmentByWilayahID(penempatanID int64, lokasiType string) (departments []Domain.DepartmentInfoResponse, serviceErr *Web.ServiceErrorDto)
 		FindAllDepartments() (departments []Domain.DepartmentResponse, serviceErr *Web.ServiceErrorDto)
 
 		CreatePlacement(request []Domain.CreatePlacementRequest) (id int64, serviceErr *Web.ServiceErrorDto)
@@ -50,7 +51,6 @@ func (h *DepartmentServiceImpl) CreateDepartment(request []Domain.CreateDepartme
 
 	return id, nil
 }
-
 func (h *DepartmentServiceImpl) UpdateDepartment(request Domain.UpdateDepartmentRequest) (id int64, serviceErr *Web.ServiceErrorDto) {
 	department := &Database.Departeman{
 		ID:           request.ID,
@@ -62,14 +62,20 @@ func (h *DepartmentServiceImpl) UpdateDepartment(request Domain.UpdateDepartment
 	}
 	return id, nil
 }
-
 func (h *DepartmentServiceImpl) DeleteDepartment(id int64) (serviceErr *Web.ServiceErrorDto) {
 	if err := h.repo.DeleteDepartment(id); err != nil {
 		return Web.NewCustomServiceError("Department not deleted", err, http.StatusInternalServerError)
 	}
 	return nil
 }
+func (h *DepartmentServiceImpl) FindDepartmentByWilayahID(penempatanID int64, lokasiType string) (department []Domain.DepartmentInfoResponse, serviceErr *Web.ServiceErrorDto) {
+	department, err := h.repo.FindDepartmentBypenempatanID(penempatanID, lokasiType)
+	if err != nil {
+		return []Domain.DepartmentInfoResponse{}, Web.NewCustomServiceError("Failed to find pengurus by wilayah ID", err, http.StatusInternalServerError)
+	}
 
+	return department, nil
+}
 func (h *DepartmentServiceImpl) FindAllDepartments() (departments []Domain.DepartmentResponse, serviceErr *Web.ServiceErrorDto) {
 	departmentList, err := h.repo.FindAllDepartments()
 	if err != nil {

@@ -4,21 +4,30 @@
 
 package Database
 
+import (
+	"time"
+)
+
 const TableNameAnggotum = "anggota"
 
 // Anggotum mapped from table <anggota>
 type Anggotum struct {
-	ID               int64  `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
-	NomorKta         int64  `gorm:"column:nomor_kta" json:"nomor_kta"`
-	Ranting          int64  `gorm:"column:ranting" json:"ranting"`
-	NamaLengkap      string `gorm:"column:nama_lengkap" json:"nama_lengkap"`
-	GelarKesarjanaan string `gorm:"column:gelar_kesarjanaan" json:"gelar_kesarjanaan"`
-	GelarLainDepan   string `gorm:"column:gelar_lain_depan" json:"gelar_lain_depan"`
-	TempatLahir      string `gorm:"column:tempat_lahir" json:"tempat_lahir"`
-	TanggalLahir     string `gorm:"column:tanggal_lahir" json:"tanggal_lahir"`
-	JenisKelamin     string `gorm:"column:jenis_kelamin" json:"jenis_kelamin"`
-	Alamat           int64  `gorm:"column:alamat" json:"alamat"`
-	Status           string `gorm:"column:status" json:"status"`
+	ID               int64     `gorm:"column:id;primaryKey;autoIncrement:true" json:"id"`
+	NomorKta         int64     `gorm:"column:nomor_kta" json:"nomor_kta"`
+	Cabang           int64     `gorm:"column:cabang" json:"cabang"`
+	NamaLengkap      string    `gorm:"column:nama_lengkap" json:"nama_lengkap"`
+	Nik              int64     `gorm:"column:nik" json:"nik"`
+	GelarKesarjanaan string    `gorm:"column:gelar_kesarjanaan" json:"gelar_kesarjanaan"`
+	GelarLainDepan   string    `gorm:"column:gelar_lain_depan" json:"gelar_lain_depan"`
+	TempatLahir      string    `gorm:"column:tempat_lahir" json:"tempat_lahir"`
+	TanggalLahir     time.Time `gorm:"column:tanggal_lahir" json:"tanggal_lahir"`
+	JenisKelamin     string    `gorm:"column:jenis_kelamin" json:"jenis_kelamin"`
+	StatusPernikahan string    `gorm:"column:status_pernikahan" json:"status_pernikahan"`
+	Email            string    `gorm:"column:email" json:"email"`
+	NoTelp           int64     `gorm:"column:no_telp" json:"no_telp"`
+	Alamat           int64     `gorm:"column:alamat" json:"alamat"`
+	Status           string    `gorm:"column:status" json:"status"`
+	InfoAnggotaID    int64     `gorm:"column:info_anggotaID" json:"info_anggotaID"`
 }
 
 // TableName Anggotum's table name

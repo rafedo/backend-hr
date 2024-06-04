@@ -42,6 +42,7 @@ type PWMControllerHandler interface {
 	UpdateMember(c *fiber.Ctx) (err error)
 	DeleteMember(c *fiber.Ctx) (err error)
 	FindAllMember(c *fiber.Ctx) (err error)
+	FindAllMemberActive(c *fiber.Ctx) (err error)
 	FindMemberByID(c *fiber.Ctx) (err error)
 
 	FindWilayahByID(c *fiber.Ctx) (err error)
@@ -390,8 +391,9 @@ func (h *PWMControllerImpl) CreateMember(c *fiber.Ctx) (err error) {
 		request    []Domain.CreateAnggotaRequest
 		serviceErr *Web.ServiceErrorDto
 	)
+
 	if err = c.BodyParser(&request); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(Web.ErrorResponse(Constant.FailedBindError, nil))
+		return c.Status(http.StatusBadRequest).JSON(Web.ErrorResponse(Constant.FailedBindError, err))
 	}
 
 	if _, serviceErr = h.service.CreateMember(request); serviceErr != nil {
@@ -407,7 +409,7 @@ func (h *PWMControllerImpl) UpdateMember(c *fiber.Ctx) (err error) {
 		serviceErr *Web.ServiceErrorDto
 	)
 	if err = c.BodyParser(&request); err != nil {
-		return c.Status(http.StatusBadRequest).JSON(Web.ErrorResponse(Constant.FailedBindError, nil))
+		return c.Status(http.StatusBadRequest).JSON(Web.ErrorResponse(Constant.FailedBindError, err))
 	}
 
 	if _, serviceErr = h.service.UpdateMember(request); serviceErr != nil {
@@ -442,6 +444,18 @@ func (h *PWMControllerImpl) FindAllMember(c *fiber.Ctx) (err error) {
 	)
 
 	if response, serviceErr = h.service.FindAllMember(); serviceErr != nil {
+		return c.Status(serviceErr.StatusCode).JSON(Web.ErrorResponse(serviceErr.Message, serviceErr.Err))
+	}
+
+	return c.Status(http.StatusOK).JSON(Web.SuccessResponse("Data Anggota", response))
+}
+func (h *PWMControllerImpl) FindAllMemberActive(c *fiber.Ctx) (err error) {
+	var (
+		serviceErr *Web.ServiceErrorDto
+		response   []Domain.AnggotaResponse
+	)
+
+	if response, serviceErr = h.service.FindAllMemberActive(); serviceErr != nil {
 		return c.Status(serviceErr.StatusCode).JSON(Web.ErrorResponse(serviceErr.Message, serviceErr.Err))
 	}
 

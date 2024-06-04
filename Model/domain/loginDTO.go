@@ -23,10 +23,12 @@ type RegisterResponse struct {
 }
 
 type User struct {
-	UserID     int64  `json:"userId"`
-	Jabatan    string `json:"jabatan"`
-	Departemen string `json:"departemen"`
-	Penempatan string `json:"penempatan"`
+	UserID        int64  `json:"userId"`
+	Username      string `json:"username"`
+	Jabatan       string `json:"jabatan"`
+	Departemen    string `json:"departemen"`
+	Penempatan    string `json:"penempatan"`
+	Penempatan_ID int64  `json:"penempatan_id"`
 }
 
 type UserResponse struct {
@@ -34,4 +36,10 @@ type UserResponse struct {
 	Username   string `json:"username"`
 	Password   string `json:"password"`
 	PengurusID int64  `json:"pengurusId"`
+}
+
+type JwtTokenDetail struct {
+	Token     *string
+	UserID    int64
+	ExpiresIn *int64
 }

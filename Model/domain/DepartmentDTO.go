@@ -56,3 +56,13 @@ type PositionResponse struct {
 	Nama         string `json:"nama"`
 	DepartemenID int64  `json:"departemen_id"`
 }
+
+type DepartmentInfoResponse struct {
+	ID           int64  `json:"id"`
+	Nama         string `json:"nama"`
+	Bagian       string `json:"bagian"`
+	PenempatanID int64  `json:"penempatan_id"`
+	LokasiID     int64  `json:"lokasi_id"`
+	LokasiType   string `json:"lokasi_type"`
+	Jenis        string `json:"jenis"`
+}

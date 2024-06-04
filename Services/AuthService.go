@@ -5,6 +5,8 @@ import (
 	"muhammadiyah/Model/Database"
 	"muhammadiyah/Model/Domain"
 	"net/http"
+	"os"
+	"time"
 
 	"muhammadiyah/Model/Web"
 	"muhammadiyah/Repository"
@@ -21,11 +23,11 @@ type (
 	AuthServiceImpl struct {
 		authRepo     Repository.AuthRepositoryHandler
 		pengurusRepo Repository.PengurusRepositoryHandler
-		anggotaRepo  Repository.PWMRepositoryHandler
+		anggotaRepo  Repository.AnggotaRepositoryHandler
 	}
 )
 
-func AuthServiceControllerProvider(authRepo Repository.AuthRepositoryHandler, pengurusRepo Repository.PengurusRepositoryHandler, anggotaRepo Repository.PWMRepositoryHandler) *AuthServiceImpl {
+func AuthServiceControllerProvider(authRepo Repository.AuthRepositoryHandler, pengurusRepo Repository.PengurusRepositoryHandler, anggotaRepo Repository.AnggotaRepositoryHandler) *AuthServiceImpl {
 	return &AuthServiceImpl{
 		authRepo:     authRepo,
 		pengurusRepo: pengurusRepo,
@@ -34,47 +36,34 @@ func AuthServiceControllerProvider(authRepo Repository.AuthRepositoryHandler, pe
 }
 
 func (h *AuthServiceImpl) Login(request Domain.LoginRequest) (response Domain.LoginResponse, serviceErr *Web.ServiceErrorDto) {
-	//response, err := h.authRepo.Login(data)
-	//if err != nil {
-	//	return response, Web.NewCustomServiceError("Login failed", err, http.StatusUnauthorized)
-	//}
-	//
-
 	var data Database.User
 
 	// Mencoba mencari pengguna berdasarkan username
 	userByUsername, err := h.authRepo.FindUserByUsername(request.Username)
+
 	if err == nil {
 		data = userByUsername
 	} else {
 		// Jika pencarian berdasarkan username tidak berhasil, coba mencari berdasarkan email
 		userByEmail, err := h.authRepo.FindUserByEmail(request.Username)
 		if err != nil {
-			return response, Web.NewCustomServiceError("Username salah", err, http.StatusUnauthorized)
+			return response, Web.NewCustomServiceError("Username dan Password salah", err, http.StatusUnauthorized)
 		}
 		data = userByEmail
 	}
 
 	// Setelah mendapatkan data pengguna, lakukan pengecekan password dan buat token jika berhasil
 	if data.Password != request.Password {
-		return response, Web.NewCustomServiceError("Login failed", nil, http.StatusUnauthorized)
+		return response, Web.NewCustomServiceError("Login failed", err, http.StatusUnauthorized)
 	}
-	user, err := h.authRepo.FindDetailUserByID(data.ID)
-	if err != nil {
-		return response, Web.NewCustomServiceError("Login failed", nil, http.StatusUnauthorized)
-	}
-	token, err := Middleware.GenerateToken(Domain.User{
-		UserID:     data.ID,
-		Jabatan:    user.Jabatan,
-		Departemen: user.Departemen,
-		Penempatan: user.Penempatan,
-	})
+
+	token, err := Middleware.GenerateTokenJwtV2(time.Hour*24*7, data.ID, os.Getenv("ACCESS_TOKEN_PRIVATE_KEY"))
 	if err != nil {
 		return response, Web.NewCustomServiceError("Login failed", err, http.StatusUnauthorized)
 	}
 
 	response = Domain.LoginResponse{
-		Token: token,
+		Token: *token.Token,
 	}
 
 	return response, nil
@@ -92,12 +81,12 @@ func (h *AuthServiceImpl) Register(request Domain.RegisterRequest) (response Dom
 	})
 	_, err = h.authRepo.FindUserByUsername(request.Username)
 	if err == nil {
-		return response, Web.NewCustomServiceError("Username already exists", nil, http.StatusBadRequest)
+		return response, Web.NewCustomServiceError("Username already exists", err, http.StatusBadRequest)
 	}
 
 	_, err = h.authRepo.FindUserByEmail(request.Email)
-	if err != nil {
-		return response, Web.NewCustomServiceError("Email already exists", nil, http.StatusBadRequest)
+	if err == nil {
+		return response, Web.NewCustomServiceError("Email already exists", err, http.StatusBadRequest)
 	}
 
 	// Simpan pengguna baru ke dalam database
@@ -139,10 +128,12 @@ func (h *AuthServiceImpl) GetUserByID(id int64) (response Domain.User, serviceEr
 		return Domain.User{}, Web.NewCustomServiceError("User not found ", err, http.StatusInternalServerError)
 	}
 	userResponse := Domain.User{
-		UserID:     user.UserID,
-		Jabatan:    user.Jabatan,
-		Departemen: user.Departemen,
-		Penempatan: user.Penempatan,
+		UserID:        id,
+		Username:      user.Username,
+		Jabatan:       user.Jabatan,
+		Departemen:    user.Departemen,
+		Penempatan:    user.Penempatan,
+		Penempatan_ID: user.Penempatan_ID,
 	}
 	return userResponse, nil
 }

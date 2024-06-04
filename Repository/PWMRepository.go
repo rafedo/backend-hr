@@ -39,19 +39,6 @@ type (
 		UpdateAddress(data *Database.Alamat) (id int64, err error)
 		DeleteAddress(id int64) error
 		FindAddressByID(id int64) (data Database.Alamat, err error)
-
-		CreateMember(data *Database.Anggotum) (id int64, err error)
-		UpdateMember(data *Database.Anggotum) (id int64, err error)
-		DeleteMember(id int64) error
-		FindAllMembers() (data []Database.Anggotum, err error)
-		FindMemberByID(id int64) (data Database.Anggotum, err error)
-		FindMemberByKTA(nomorKTA int64) (data Database.Anggotum, err error)
-
-		FindMembersByRantingID(rantingID int64) (data []Database.Anggotum, err error)
-		FindMembersByCabangID(cabangID int64) (data []Database.Anggotum, err error)
-		FindMembersByDaerahID(daerahID int64) (data []Database.Anggotum, err error)
-		FindMembersByWilayahID(wilayahID int64) (data []Database.Anggotum, err error)
-		CountMembers() (count int64, err error)
 	}
 
 	PWMRepositoryImpl struct {
@@ -305,88 +292,4 @@ func (h *PWMRepositoryImpl) FindAddressByID(id int64) (data Database.Alamat, err
 		Error
 
 	return data, err
-}
-
-func (h *PWMRepositoryImpl) CreateMember(data *Database.Anggotum) (id int64, err error) {
-	err = h.DB.Model(&Database.Anggotum{}).Save(&data).Error
-	return data.ID, err
-}
-
-func (h *PWMRepositoryImpl) UpdateMember(data *Database.Anggotum) (id int64, err error) {
-	err = h.DB.Model(&Database.Anggotum{}).Where("id = ?", data.ID).Updates(&data).Error
-	return data.ID, err
-}
-
-func (h *PWMRepositoryImpl) DeleteMember(id int64) error {
-	err := h.DB.Delete(&Database.Anggotum{}, id).Error
-	return err
-}
-
-func (h *PWMRepositoryImpl) FindAllMembers() (data []Database.Anggotum, err error) {
-	err = h.DB.Model(&Database.Anggotum{}).
-		Select("id", "nomor_kta", "ranting", "nama_lengkap", "gelar_kesarjanaan", "gelar_lain_depan", "tempat_lahir", "tanggal_lahir", "jenis_kelamin", "alamat", "status").
-		Order("id asc").
-		Find(&data).
-		Error
-
-	return data, err
-}
-func (h *PWMRepositoryImpl) FindMemberByID(id int64) (data Database.Anggotum, err error) {
-	err = h.DB.Model(&Database.Anggotum{}).
-		Where("id = ?", id).
-		First(&data).
-		Error
-
-	return data, err
-}
-func (h *PWMRepositoryImpl) FindMemberByKTA(nomorKTA int64) (data Database.Anggotum, err error) {
-	err = h.DB.Model(&Database.Anggotum{}).
-		Where("nomor_kta = ?", nomorKTA).
-		First(&data).
-		Error
-
-	return data, err
-}
-func (h *PWMRepositoryImpl) FindMembersByRantingID(rantingID int64) (data []Database.Anggotum, err error) {
-	err = h.DB.Model(&Database.Anggotum{}).
-		Where("ranting_id = ?", rantingID).
-		Find(&data).
-		Error
-
-	return data, err
-}
-func (h *PWMRepositoryImpl) FindMembersByCabangID(cabangID int64) (data []Database.Anggotum, err error) {
-	err = h.DB.Model(&Database.Anggotum{}).
-		Joins("JOIN rantings ON anggota.ranting_id = rantings.id").
-		Where("rantings.cabang_id = ?", cabangID).
-		Find(&data).
-		Error
-
-	return data, err
-}
-func (h *PWMRepositoryImpl) FindMembersByDaerahID(daerahID int64) (data []Database.Anggotum, err error) {
-	err = h.DB.
-		Joins("JOIN rantings ON anggota.ranting_id = rantings.id").
-		Joins("JOIN cabangs ON rantings.cabang_id = cabangs.id").
-		Where("cabangs.daerah_id = ?", daerahID).
-		Find(&data).
-		Error
-
-	return data, err
-}
-
-func (h *PWMRepositoryImpl) FindMembersByWilayahID(wilayahID int64) (data []Database.Anggotum, err error) {
-	err = h.DB.
-		Joins("JOIN ranting ON anggota.ranting_id = ranting.id").
-		Joins("JOIN cabang ON ranting.cabang_id = cabang.id").
-		Joins("JOIN daerah ON cabang.daerah_id = daerah.id").
-		Where("daerah.wilayah_id = ?", wilayahID).
-		Find(&data).
-		Error
-
-	return data, err
-}
-func (h *PWMRepositoryImpl) CountMembers() (count int64, err error) {
-	err = h.DB.Model(&Database.Anggotum{}).Count(&count).Error
-	return count, err
 }

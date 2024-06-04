@@ -1,73 +1,43 @@
 package Middleware
 
 import (
+	"encoding/base64"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
-	"github.com/golang-jwt/jwt/v5"
+	"github.com/golang-jwt/jwt"
+	"muhammadiyah/Constant"
 	"muhammadiyah/Model/Domain"
+	"muhammadiyah/Model/Web"
 	"net/http"
+	"os"
+	"strconv"
 	"strings"
 	"time"
 )
 
 func JwtMiddleware() fiber.Handler {
 	return func(c *fiber.Ctx) error {
+		var acces_token string
 		// Ambil token JWT dari header Authorization
 		authHeader := c.Get("Authorization")
-		if authHeader == "" {
-			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Missing Authorization header",
-			})
+		if strings.HasPrefix(authHeader, "Bearer ") {
+			acces_token = strings.TrimPrefix(authHeader, "Bearer ")
 		}
-
-		// Periksa apakah header Authorization memiliki format yang sesuai
-		tokenParts := strings.Split(authHeader, " ")
-		if len(tokenParts) != 2 || tokenParts[0] != "Bearer" {
-			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Invalid Authorization header format",
-			})
-		}
-
-		// Ambil token JWT dari bagian kedua header Authorization
-		tokenString := tokenParts[1]
-
-		// Verifikasi token JWT
-		claims := jwt.MapClaims{}
-		token, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
-			return []byte("secret"), nil // Ganti "secret" dengan kunci rahasia yang digunakan untuk menandatangani token
-		})
+		tokenClaim, err := ValidateTokenJwt(acces_token, os.Getenv("ACCESS_TOKEN_PUBLIC_KEY"))
 		if err != nil {
-			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Failed to parse JWT token",
-			})
-		}
+			return c.Status(http.StatusUnauthorized).JSON(Web.ErrorResponse(Constant.AuthorizeError, nil))
 
-		if !token.Valid {
-			return c.Status(http.StatusUnauthorized).JSON(fiber.Map{
-				"error": "Invalid JWT token",
-			})
 		}
-
-		// Ambil data dari klaim token JWT
-		userID := claims["user_id"].(string)
-		jabatan := claims["jabatan"].(string)
-		departemen := claims["departemen"].(string)
-		penempatan := claims["penempatan"].(string)
 
 		// Set data dari token ke dalam lokal untuk digunakan dalam handler selanjutnya
-		c.Locals("userID", userID)
-		c.Locals("jabatan", jabatan)
-		c.Locals("departemen", departemen)
-		c.Locals("penempatan", penempatan)
-
-		// Lanjutkan eksekusi jika token valid dan data berhasil diambil
+		c.Locals("userID", tokenClaim.UserID)
 		return c.Next()
 	}
 }
 
 func CheckPermissions(allowedPosition []string, allowedDepartment []string, allowedPlacement []string) fiber.Handler {
 	return func(c *fiber.Ctx) error {
-		// Mengambil data pengguna dari lokal
+
 		userData := c.Locals("token")
 		fmt.Println(userData)
 		if userData == nil {
@@ -150,25 +120,82 @@ func checkPosition(userPosition string, allowedPositions []string) bool {
 	return false
 }
 
-func GenerateToken(user Domain.User) (string, error) {
-	// Tentukan waktu kedaluwarsa token (contoh: 1 jam dari sekarang)
-	expiredAt := time.Now().Add(time.Hour * 1).Unix()
+func GenerateTokenJwtV2(jwTokenTime time.Duration, user int64, privateKey string) (*Domain.JwtTokenDetail, error) {
+	expTime := time.Now()
 
-	// Buat payload token dengan klaim waktu kedaluwarsa
-	claims := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
-		"user_id":    user.UserID,
-		"jabatan":    user.Jabatan,
-		"departemen": user.Departemen,
-		"penempatan": user.Penempatan,
-		"exp":        expiredAt, // Klaim waktu kedaluwarsa
-		// Anda dapat menambahkan informasi tambahan di sini
-	})
-
-	// Tandatangani token dengan kunci rahasia
-	tokenString, err := claims.SignedString([]byte("secret")) // Ganti "secret" dengan kunci rahasia Anda yang lebih aman
-	if err != nil {
-		return "", err
+	tokenDetail := &Domain.JwtTokenDetail{
+		ExpiresIn: new(int64),
+		Token:     new(string),
 	}
 
-	return tokenString, nil
+	*tokenDetail.ExpiresIn = expTime.Add(jwTokenTime).Unix()
+	tokenDetail.UserID = user
+
+	decodePrivateKey, err := base64.StdEncoding.DecodeString(privateKey)
+	if err != nil {
+		return nil, err
+	}
+
+	key, err := jwt.ParseRSAPrivateKeyFromPEM(decodePrivateKey)
+	if err != nil {
+		return nil, err
+	}
+	fmt.Println(user)
+	claimJwt := jwt.MapClaims{}
+	claimJwt["sub"] = user
+	claimJwt["exp"] = tokenDetail.ExpiresIn
+	claimJwt["iat"] = expTime.Unix()
+	claimJwt["nbf"] = expTime.Unix()
+	*tokenDetail.Token, err = jwt.NewWithClaims(jwt.SigningMethodRS256, claimJwt).SignedString(key)
+	if err != nil {
+		return nil, err
+	}
+
+	return tokenDetail, nil
+
+}
+
+func ValidateTokenJwt(token string, publicKey string) (*Domain.JwtTokenDetail, error) {
+	decodePublicKey, err := base64.StdEncoding.DecodeString(publicKey)
+	if err != nil {
+		return nil, err
+	}
+	key, err := jwt.ParseRSAPublicKeyFromPEM(decodePublicKey)
+	if err != nil {
+		return nil, err
+	}
+	parsedToken, err := jwt.Parse(token, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodRSA); !ok {
+			return nil, fmt.Errorf("unexpected signing method: %v", token.Header["alg"])
+		}
+		return key, nil
+	})
+	if err != nil {
+		return nil, err
+	}
+	claims, ok := parsedToken.Claims.(jwt.MapClaims)
+	if !ok && !parsedToken.Valid {
+		return nil, err
+	}
+
+	subStr := fmt.Sprint(claims["sub"])
+	userID, err := strconv.ParseInt(subStr, 10, 64)
+	if err != nil {
+		return nil, fmt.Errorf("invalid userID: %v", err)
+	}
+	return &Domain.JwtTokenDetail{
+		UserID: userID,
+	}, nil
+}
+
+func DecodeToken(tokenString string) (jwt.MapClaims, error) {
+	claims := jwt.MapClaims{}
+	_, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
+		return []byte("secret"), nil // Ganti "secret" dengan kunci rahasia yang digunakan untuk menandatangani token
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return claims, nil
 }

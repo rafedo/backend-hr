@@ -17,7 +17,8 @@ import (
 
 func PWMDI(db *gorm.DB) *Controller.PWMControllerImpl {
 	pwmRepositoryImpl := Repository.PWMRepositoryControllerProvider(db)
-	pwmServiceImpl := Services.PWMServiceControllerProvider(pwmRepositoryImpl)
+	anggotaRepositoryImpl := Repository.AnggotaRepositoryControllerProvider(db)
+	pwmServiceImpl := Services.PWMServiceControllerProvider(pwmRepositoryImpl, anggotaRepositoryImpl)
 	pwmControllerImpl := Controller.PWMControllerControllerProvider(pwmServiceImpl)
 	return pwmControllerImpl
 }
@@ -39,8 +40,8 @@ func PengurusDI(db *gorm.DB) *Controller.PengurusControllerImpl {
 func AuthDI(db *gorm.DB) *Controller.AuthControllerImpl {
 	authRepositoryImpl := Repository.AuthRepositoryControllerProvider(db)
 	pengurusRepositoryImpl := Repository.PengurusRepositoryControllerProvider(db)
-	pwmRepositoryImpl := Repository.PWMRepositoryControllerProvider(db)
-	authServiceImpl := Services.AuthServiceControllerProvider(authRepositoryImpl, pengurusRepositoryImpl, pwmRepositoryImpl)
+	anggotaRepositoryImpl := Repository.AnggotaRepositoryControllerProvider(db)
+	authServiceImpl := Services.AuthServiceControllerProvider(authRepositoryImpl, pengurusRepositoryImpl, anggotaRepositoryImpl)
 	authControllerImpl := Controller.AuthControllerControllerProvider(authServiceImpl)
 	return authControllerImpl
 }

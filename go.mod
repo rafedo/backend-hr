@@ -4,10 +4,11 @@ go 1.21.5
 
 require (
 	github.com/gofiber/fiber/v2 v2.52.4
-	github.com/golang-jwt/jwt/v5 v5.2.1
+	github.com/golang-jwt/jwt v3.2.2+incompatible
 	github.com/google/wire v0.6.0
 	github.com/joho/godotenv v1.5.1
 	github.com/lib/pq v1.10.9
+	gorm.io/datatypes v1.1.1-0.20230130040222-c43177d3cf8c
 	gorm.io/driver/postgres v1.5.7
 	gorm.io/gen v0.3.26
 	gorm.io/gorm v1.25.9
@@ -35,7 +36,6 @@ require (
 	golang.org/x/sys v0.16.0 // indirect
 	golang.org/x/text v0.14.0 // indirect
 	golang.org/x/tools v0.17.0 // indirect
-	gorm.io/datatypes v1.1.1-0.20230130040222-c43177d3cf8c // indirect
 	gorm.io/driver/mysql v1.4.4 // indirect
 	gorm.io/hints v1.1.0 // indirect
 	gorm.io/plugin/dbresolver v1.5.0 // indirect

@@ -17,6 +17,7 @@ type PengurusControllerHandler interface {
 	FindAllPengurus(c *fiber.Ctx) (err error)
 	DeletePengurus(c *fiber.Ctx) (err error)
 	FindPengurusByID(c *fiber.Ctx) (err error)
+	FindAllPengurusByWilayahID(c *fiber.Ctx) (err error)
 }
 
 type PengurusControllerImpl struct {
@@ -99,7 +100,7 @@ func (h *PengurusControllerImpl) FindPengurusByID(c *fiber.Ctx) (err error) {
 	var (
 		serviceErr *Web.ServiceErrorDto
 		id         int64
-		response   Domain.PengurusResponse
+		response   Domain.PengurusInfoResponse
 	)
 
 	idParam := c.Params("id")
@@ -113,4 +114,22 @@ func (h *PengurusControllerImpl) FindPengurusByID(c *fiber.Ctx) (err error) {
 	}
 
 	return c.Status(http.StatusOK).JSON(Web.SuccessResponse("data pengurus", response))
+}
+
+func (h *PengurusControllerImpl) FindAllPengurusByDepartementID(c *fiber.Ctx) (err error) {
+	var (
+		serviceErr *Web.ServiceErrorDto
+		response   []Domain.PengurusInfoResponse
+	)
+
+	departementID, err := strconv.ParseInt(c.Params("departementID"), 10, 64)
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(Web.ErrorResponse("Invalid Wilayah ID format", err))
+	}
+
+	if response, serviceErr = h.service.FindPengurusByDepartementID(departementID); serviceErr != nil {
+		return c.Status(serviceErr.StatusCode).JSON(Web.ErrorResponse(serviceErr.Message, serviceErr.Err))
+	}
+
+	return c.Status(http.StatusOK).JSON(Web.SuccessResponse("Data Anggota by Wilayah ID", response))
 }

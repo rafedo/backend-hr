@@ -42,7 +42,7 @@ func InitDB() {
 	})
 
 	DB = con
-	err := DB.AutoMigrate(&Migration.Alamat{}, &Migration.Wilayah{}, &Migration.Daerah{}, &Migration.Cabang{}, &Migration.Ranting{}, &Migration.Penempatan{}, &Migration.Departemen{}, &Migration.Jabatan{}, &Migration.Anggota{}, &Migration.Pengurus{}, &Migration.User{})
+	err := DB.AutoMigrate(&Migration.Alamat{}, &Migration.Wilayah{}, &Migration.Daerah{}, &Migration.Cabang{}, &Migration.Ranting{}, &Migration.Penempatan{}, &Migration.Departemen{}, &Migration.Jabatan{}, &Migration.InfoAnggota{}, &Migration.Anggota{}, &Migration.Pengurus{}, &Migration.User{}, &Migration.Pengajuan{}, &Migration.DetailPengajuan{}, &Migration.RiwayatJabatan{})
 	if err != nil {
 		log.Fatal(err)
 	}

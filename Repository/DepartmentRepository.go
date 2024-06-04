@@ -3,6 +3,7 @@ package Repository
 import (
 	"gorm.io/gorm"
 	"muhammadiyah/Model/Database"
+	"muhammadiyah/Model/Domain"
 )
 
 type (
@@ -10,6 +11,7 @@ type (
 		CreateDepartment(data *Database.Departeman) (id int64, err error)
 		UpdateDepartment(data *Database.Departeman) (id int64, err error)
 		DeleteDepartment(id int64) error
+		FindDepartmentBypenempatanID(penempatanID int64, lokasiType string) (data []Domain.DepartmentInfoResponse, err error)
 		FindAllDepartments() (data []Database.Departeman, err error)
 
 		CreatePlacement(data *Database.Penempatan) (id int64, err error)
@@ -47,6 +49,18 @@ func (h *DepartmentRepositoryImpl) UpdateDepartment(data *Database.Departeman) (
 func (h *DepartmentRepositoryImpl) DeleteDepartment(id int64) error {
 	err := h.DB.Delete(&Database.Departeman{}, id).Error
 	return err
+}
+
+func (r *DepartmentRepositoryImpl) FindDepartmentBypenempatanID(penempatanID int64, lokasiType string) ([]Domain.DepartmentInfoResponse, error) {
+	var DepartmentInfoList []Domain.DepartmentInfoResponse
+
+	err := r.DB.Table("departemen").
+		Select(" departemen.id, departemen.nama, departemen.bagian, penempatan.id as penempatan_id, penempatan.lokasi_id, penempatan.lokasi_type, penempatan.jenis").
+		Joins("join penempatan on departemen.penempatan_id = penempatan.id").
+		Where("penempatan.lokasi_id = ? AND penempatan.lokasi_type = ?", penempatanID, lokasiType).
+		Scan(&DepartmentInfoList).Error
+
+	return DepartmentInfoList, err
 }
 
 func (h *DepartmentRepositoryImpl) FindAllDepartments() (data []Database.Departeman, err error) {

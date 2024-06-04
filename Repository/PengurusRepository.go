@@ -2,6 +2,7 @@ package Repository
 
 import (
 	"muhammadiyah/Model/Database"
+	"muhammadiyah/Model/Domain"
 
 	"gorm.io/gorm"
 )
@@ -12,7 +13,8 @@ type (
 		UpdatePengurus(data *Database.Penguru) (id int64, err error)
 		DeletePengurus(id int64) error
 		FindAllPengurus() (data []Database.Penguru, err error)
-		FindPengurusByID(id int64) (Database.Penguru, error)
+		FindPengurusByID(id int64) (Domain.PengurusInfoResponse, error)
+		FindPengurusInfoByDepartementID(departementID int64) ([]Domain.PengurusInfoResponse, error)
 	}
 
 	PengurusRepositoryImpl struct {
@@ -46,10 +48,30 @@ func (repo *PengurusRepositoryImpl) FindAllPengurus() (data []Database.Penguru, 
 	return data, err
 }
 
-func (repo *PengurusRepositoryImpl) FindPengurusByID(id int64) (Database.Penguru, error) {
-	var pengurus Database.Penguru
-	err := repo.DB.Model(&Database.Penguru{}).Where("id = ?", id).First(&pengurus).Error
+func (repo *PengurusRepositoryImpl) FindPengurusByID(id int64) (Domain.PengurusInfoResponse, error) {
+	var pengurus Domain.PengurusInfoResponse
+	err := repo.DB.Table("pengurus").
+		Select("pengurus.id, pengurus.anggota_id, anggota.nomor_kta, anggota.nama_lengkap, anggota.gelar_kesarjanaan, anggota.gelar_lain_depan, anggota.status, pengurus.jabatan_id, jabatan.nama as nama_jabatan, departemen.id as departemen_id, departemen.nama as nama_departemen, penempatan.id as penempatan_id, penempatan.lokasi_id, penempatan.lokasi_type, penempatan.jenis").
+		Joins("join anggota on pengurus.anggota_id = anggota.id").
+		Joins("join jabatan on pengurus.jabatan_id = jabatan.id").
+		Joins("join departemen on jabatan.departemen_id = departemen.id").
+		Joins("join penempatan on departemen.penempatan_id = penempatan.id").
+		Where("pengurus.id = ?", id).First(&pengurus).Error
 	return pengurus, err
+}
+func (r *PengurusRepositoryImpl) FindPengurusInfoByDepartementID(departementID int64) ([]Domain.PengurusInfoResponse, error) {
+	var pengurusInfoList []Domain.PengurusInfoResponse
+
+	err := r.DB.Table("pengurus").
+		Select("pengurus.id, pengurus.anggota_id, anggota.nomor_kta, anggota.nama_lengkap, anggota.gelar_kesarjanaan, anggota.gelar_lain_depan, anggota.status, pengurus.jabatan_id, jabatan.nama as nama_jabatan, departemen.id as departemen_id, departemen.nama as nama_departemen, penempatan.id as penempatan_id, penempatan.lokasi_id, penempatan.lokasi_type, penempatan.jenis").
+		Joins("join anggota on pengurus.anggota_id = anggota.id").
+		Joins("join jabatan on pengurus.jabatan_id = jabatan.id").
+		Joins("join departemen on jabatan.departemen_id = departemen.id").
+		Joins("join penempatan on departemen.penempatan_id = penempatan.id").
+		Where("departemen.id = ?", departementID).
+		Scan(&pengurusInfoList).Error
+
+	return pengurusInfoList, err
 }
 
 //func (repo *PengurusRepositoryImpl) FindPengurusByKTA(nomorKTA string) (Database.Penguru, error) {

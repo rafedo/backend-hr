@@ -14,6 +14,7 @@ import (
 type AuthControllerHandler interface {
 	Login(c *fiber.Ctx) (err error)
 	Register(c *fiber.Ctx) (err error)
+	GetRole(c *fiber.Ctx) (err error)
 }
 type AuthControllerImpl struct {
 	service Services.AuthServiceHandler
@@ -45,18 +46,19 @@ func (h *AuthControllerImpl) Login(c *fiber.Ctx) (err error) {
 func (h *AuthControllerImpl) Register(c *fiber.Ctx) (err error) {
 	var (
 		request    Domain.RegisterRequest
+		response   Domain.RegisterResponse
 		serviceErr *Web.ServiceErrorDto
 	)
 	if err = c.BodyParser(&request); err != nil {
 		return c.Status(http.StatusBadRequest).JSON(Web.ErrorResponse(Constant.FailedBindError, nil))
 	}
 
-	if _, serviceErr = h.service.Register(request); serviceErr != nil {
+	if response, serviceErr = h.service.Register(request); serviceErr != nil {
 		fmt.Println("error at register service: ", serviceErr.Err)
 		return c.Status(serviceErr.StatusCode).JSON(Web.ErrorResponse(serviceErr.Message, serviceErr.Err))
 	}
 
-	return c.Status(http.StatusCreated).JSON(Web.SuccessResponse("registration succeed", nil))
+	return c.Status(http.StatusCreated).JSON(Web.SuccessResponse("registration succeed", response))
 }
 
 func (h *AuthControllerImpl) FindAllUser(c *fiber.Ctx) (err error) {
@@ -90,4 +92,25 @@ func (h *AuthControllerImpl) FindUserByID(c *fiber.Ctx) (err error) {
 	}
 
 	return c.Status(http.StatusOK).JSON(Web.SuccessResponse("data user", response))
+}
+
+func (h *AuthControllerImpl) GetRole(c *fiber.Ctx) (err error) {
+	var (
+		serviceErr *Web.ServiceErrorDto
+		response   Domain.User
+	)
+
+	userID := c.Locals("userID")
+	convertUserID, ok := userID.(int64)
+
+	if !ok {
+		return c.Status(http.StatusBadRequest).JSON(Web.ErrorResponse("Invalid ID format", err))
+	}
+
+	if response, serviceErr = h.service.GetUserByID(convertUserID); serviceErr != nil {
+		return c.Status(serviceErr.StatusCode).JSON(Web.ErrorResponse(serviceErr.Message, serviceErr.Err))
+	}
+
+	return c.Status(http.StatusOK).JSON(Web.SuccessResponse("data user", response))
+
 }

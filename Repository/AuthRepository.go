@@ -128,13 +128,13 @@ func (h *AuthRepositoryImpl) FindUserByEmail(email string) (data Database.User, 
 }
 func (h *AuthRepositoryImpl) FindDetailUserByID(id int64) (data Domain.User, err error) {
 	err = h.DB.Model(&Database.User{}).
-		Select("public.user.id as userID", "jabatan.nama as jabatan", "departemen.nama as departemen", "penempatan.lokasi_type as penempatan").
+		Select("public.user.id as userId", "public.user.username as username", "jabatan.nama as jabatan", "departemen.nama as departemen", "penempatan.lokasi_type as penempatan", "penempatan.lokasi_id as penempatan_id").
 		Joins("JOIN pengurus ON public.user.pengurus_id = pengurus.id").
 		Joins("JOIN jabatan ON pengurus.jabatan_id = jabatan.id").
 		Joins("JOIN departemen ON jabatan.departemen_id = departemen.id").
 		Joins("JOIN penempatan ON penempatan.id = departemen.penempatan_id").
 		Where("public.user.id = ?", id).
-		Order("userID").
+		Order("userId").
 		Limit(1).
 		Scan(&data).Error
 

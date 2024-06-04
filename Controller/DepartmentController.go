@@ -15,6 +15,7 @@ type DepartmentControllerHandler interface {
 	CreateDepartment(c *fiber.Ctx) (err error)
 	UpdateDepartment(c *fiber.Ctx) (err error)
 	FindAllDepartments(c *fiber.Ctx) (err error)
+	FindDepartmentsByPenempatanID(c *fiber.Ctx) (err error)
 	DeleteDepartment(c *fiber.Ctx) (err error)
 
 	CreatePlacement(c *fiber.Ctx) (err error)
@@ -83,6 +84,24 @@ func (h *DepartmentControllerImpl) FindAllDepartments(c *fiber.Ctx) (err error) 
 	}
 
 	return c.Status(http.StatusOK).JSON(Web.SuccessResponse("data departments", response))
+}
+func (h *DepartmentControllerImpl) FindDepartmentsByPenempatanID(c *fiber.Ctx) (err error) {
+	var (
+		serviceErr *Web.ServiceErrorDto
+		response   []Domain.DepartmentInfoResponse
+	)
+
+	penempatanID, err := strconv.ParseInt(c.Params("penempatanID"), 10, 64)
+	lokasiType := c.Params("lokasiType")
+	if err != nil {
+		return c.Status(http.StatusBadRequest).JSON(Web.ErrorResponse("Invalid Wilayah ID format", err))
+	}
+
+	if response, serviceErr = h.service.FindDepartmentByWilayahID(penempatanID, lokasiType); serviceErr != nil {
+		return c.Status(serviceErr.StatusCode).JSON(Web.ErrorResponse(serviceErr.Message, serviceErr.Err))
+	}
+
+	return c.Status(http.StatusOK).JSON(Web.SuccessResponse("Data Anggota by Wilayah ID", response))
 }
 
 func (h *DepartmentControllerImpl) DeleteDepartment(c *fiber.Ctx) (err error) {

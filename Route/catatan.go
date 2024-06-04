@@ -1,15 +1,14 @@
 package Route
 
 import (
+	"github.com/gofiber/fiber/v2"
 	"muhammadiyah/Config"
 	"muhammadiyah/Middleware"
-
-	"github.com/gofiber/fiber/v2"
 )
 
 func CatatanRouter(c fiber.Router) {
 	pwm := PWMDI(Config.DB)
-	c.Get("/wilayah", Middleware.JwtMiddleware(), Middleware.CheckPermissions([]string{"all"}, []string{"all"}, []string{"wilayah"}), pwm.FindAllWilayah)
+	c.Get("/wilayah", pwm.FindAllWilayah)
 	c.Post("/wilayah", pwm.CreateWilayah)
 	c.Patch("/wilayah", pwm.UpdateWilayah)
 	c.Delete("/wilayah/:id", pwm.DeleteWilayah)
@@ -30,6 +29,7 @@ func CatatanRouter(c fiber.Router) {
 	c.Delete("/ranting/:id", pwm.DeleteRanting)
 
 	c.Get("/member", pwm.FindAllMember)
+	c.Get("/member/active", pwm.FindAllMemberActive)
 	c.Get("/member/total", pwm.CountMember)
 	c.Post("/member", pwm.CreateMember)
 	c.Patch("/member", pwm.UpdateMember)
@@ -54,6 +54,7 @@ func CatatanRouter(c fiber.Router) {
 	c.Get("/departments", dept.FindAllDepartments)
 	c.Post("/departments", dept.CreateDepartment)
 	c.Patch("/departments", dept.UpdateDepartment)
+	c.Get("/departments/:lokasiType/:penempatanID", dept.FindDepartmentsByPenempatanID)
 	c.Delete("/departments/:id", dept.DeleteDepartment)
 
 	c.Get("/placements", dept.FindAllPlacements)
@@ -65,16 +66,20 @@ func CatatanRouter(c fiber.Router) {
 	c.Post("/positions", dept.CreatePosition)
 	c.Patch("/positions", dept.UpdatePosition)
 	c.Delete("/positions/:id", dept.DeletePosition)
+
 	pengurus := PengurusDI(Config.DB)
 	c.Post("/pengurus", pengurus.CreatePengurus)
 	c.Patch("/pengurus", pengurus.UpdatePengurus)
 	c.Get("/pengurus", pengurus.FindAllPengurus)
 	c.Delete("/pengurus/:id", pengurus.DeletePengurus)
 	c.Get("/pengurus/:id", pengurus.FindPengurusByID)
+	c.Get("/pengurus/departement/:departementID", pengurus.FindAllPengurusByDepartementID)
+
 	auth := AuthDI(Config.DB)
 	c.Post("/login", auth.Login)
 	c.Post("/register", auth.Register)
 	c.Get("/user", auth.FindAllUser)
 	c.Get("/user/:userID", auth.FindUserByID)
+	c.Get("/get-role", Middleware.JwtMiddleware(), auth.GetRole)
 
 }
